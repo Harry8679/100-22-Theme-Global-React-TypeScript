@@ -5,4 +5,5 @@ export default defineConfig({
   plugins: [
     tailwindcss(),
   ],
+  base: '/100-22-Theme-Global-React-TypeScript/'
 })
