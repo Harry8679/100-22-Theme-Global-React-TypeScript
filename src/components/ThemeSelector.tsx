@@ -14,15 +14,14 @@ export const ThemeSelector = () => {
           <button
             key={t.id}
             onClick={() => setTheme(t.id)}
-            className={`p-4 rounded-xl transition-all ${
+            className={`p-4 rounded-xl transition-all border-2 ${
               theme.id === t.id ? 'ring-4 scale-105' : 'hover:scale-105'
             }`}
             style={{
               backgroundColor: t.colors.surface,
               borderColor: t.colors.border,
-              borderWidth: '2px',
-              ringColor: t.colors.primary,
-            }}
+              '--tw-ring-color': t.colors.primary,
+            } as React.CSSProperties}
           >
             <div className="flex items-center gap-3 mb-3">
               <div
