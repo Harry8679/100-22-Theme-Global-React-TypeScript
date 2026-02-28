@@ -1,12 +1,12 @@
-import './App.css'
+import { ThemeProvider } from './context/ThemeProvider';
+import { ThemeDemo } from './components/ThemeDemo';
 
 function App() {
-
   return (
-    <h1 className="text-3xl font-bold underline">
-      Hello world!
-    </h1>
-  )
+    <ThemeProvider defaultTheme="light" defaultMode="system">
+      <ThemeDemo />
+    </ThemeProvider>
+  );
 }
 
-export default App
+export default App;
