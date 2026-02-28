@@ -1,7 +1,7 @@
 import { useState, useEffect, useMemo, useCallback } from 'react';
 import { ThemeContext } from './ThemeContext';
 import { useSystemTheme } from '../hooks/useSystemTheme';
-import { defaultThemes, lightTheme, darkTheme } from '../themes';
+import { defaultThemes, lightTheme, darkTheme, getThemeById } from '../themes';
 import type { ThemeProviderProps, ThemeMode, Theme, ThemeColors } from '../types/theme';
 
 const THEME_STORAGE_KEY = 'app-theme-id';
@@ -31,10 +31,24 @@ export const ThemeProvider = ({
     let baseTheme: Theme;
 
     if (themeMode === 'system') {
-      baseTheme = systemTheme === 'dark' ? darkTheme : lightTheme;
+      // En mode système, on cherche un thème qui correspond au mode système
+      const selectedTheme = getThemeById(themeId);
+      
+      if (selectedTheme && selectedTheme.mode === systemTheme) {
+        // Si le thème sélectionné correspond au mode système, on l'utilise
+        baseTheme = selectedTheme;
+      } else {
+        // Sinon, on utilise le thème par défaut correspondant (light ou dark)
+        baseTheme = systemTheme === 'dark' ? darkTheme : lightTheme;
+      }
+    } else if (themeMode === 'light') {
+      // En mode clair, on utilise le thème light ou le thème sélectionné s'il est clair
+      const selectedTheme = getThemeById(themeId);
+      baseTheme = (selectedTheme && selectedTheme.mode === 'light') ? selectedTheme : lightTheme;
     } else {
-      const foundTheme = defaultThemes.find((t) => t.id === themeId);
-      baseTheme = foundTheme || lightTheme;
+      // En mode sombre, on utilise le thème dark ou le thème sélectionné s'il est sombre
+      const selectedTheme = getThemeById(themeId);
+      baseTheme = (selectedTheme && selectedTheme.mode === 'dark') ? selectedTheme : darkTheme;
     }
 
     // Apply custom colors if any
@@ -79,6 +93,12 @@ export const ThemeProvider = ({
   const setTheme = useCallback((newThemeId: string) => {
     setThemeId(newThemeId);
     setCustomColors(null);
+    
+    // Quand on sélectionne un thème, on met à jour le mode aussi
+    const selectedTheme = getThemeById(newThemeId);
+    if (selectedTheme) {
+      setThemeMode(selectedTheme.mode);
+    }
   }, []);
 
   const handleSetThemeMode = useCallback((mode: ThemeMode) => {
